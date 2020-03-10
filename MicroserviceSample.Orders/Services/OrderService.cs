@@ -33,7 +33,7 @@ namespace MicroserviceSample.Orders.Services
         ActionResponse AddNewOrder(OrderModel model);
     }
 
-    public class OrderService
+    public class OrderService : IOrderService
     {
         List<OrderItem> itemsList;
         string fileName = "orders.txt";
@@ -42,8 +42,8 @@ namespace MicroserviceSample.Orders.Services
         {
             itemsList = new List<OrderItem>() 
             {
-                new OrderItem { Item = "Chicken Combo", Price = 5.99m },
-                new OrderItem { Item = "Doublicious Sandwich – Combo", Price = 4.99m },
+                new OrderItem { Item = "Chicken", Price = 25.99m },
+                new OrderItem { Item = "Beef", Price = 34.99m },
                 new OrderItem { Item = "Mashed Potatoes", Price = 2.50m },
                 new OrderItem { Item = "Tenders Meal", Price = 19.99m },
                 new OrderItem { Item = "Hot Wings", Price = 2.0m },

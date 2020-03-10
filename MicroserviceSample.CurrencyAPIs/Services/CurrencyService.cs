@@ -20,7 +20,7 @@ namespace MicroserviceSample.CurrencyAPIs.Services
 
     public class CurrencyService : ICurrencyService
     {
-        private readonly HttpClient client;
+        public HttpClient client;
 
         public CurrencyService(HttpClient httpClient)
         {
@@ -32,7 +32,7 @@ namespace MicroserviceSample.CurrencyAPIs.Services
             List<CurrencyNamesView> currencyList = new List<CurrencyNamesView>();
             try
             {
-                var response = await client.GetStringAsync("currencies.json");
+                var response = await client.GetStringAsync("https://openexchangerates.org/api/currencies.json");
                 var currencies = JsonConvert.DeserializeObject<dynamic>(response);
                 string currencyStr = currencies != null ? JsonConvert.SerializeObject(currencies) : "";
                 currencyStr = currencyStr.Replace("\\", "").Replace("\"", "");

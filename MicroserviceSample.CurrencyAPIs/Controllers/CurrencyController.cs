@@ -20,6 +20,7 @@ namespace MicroserviceSample.Currencies.Controllers
         }
 
         [HttpGet]
+        //[Route("GetCurrencies")]
         public async Task<IActionResult> Get()
         {
             return Ok(await service.GetAll());
