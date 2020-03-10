@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MicroserviceSample.Orders.Services
@@ -79,6 +80,7 @@ namespace MicroserviceSample.Orders.Services
                     Price = price,
                     Dated = DateTime.Today.ToString()
                 });
+                response.Success = this.WriteOrdersToFile(ordersList).GetAwaiter().GetResult();
             }
             catch(Exception ex)
             {
@@ -86,6 +88,28 @@ namespace MicroserviceSample.Orders.Services
                 response.Success = false;
             }
             return response;
+        }
+
+        private async Task<bool> WriteOrdersToFile(List<OrderView> ordersList)
+        {
+            bool isSuccessful = false;
+            try
+            {
+                UnicodeEncoding uniencoding = new UnicodeEncoding();
+                string filename = ordersFilePath;
+                string ordersText = JsonConvert.SerializeObject(ordersList);
+                byte[] result = uniencoding.GetBytes(ordersText);
+                using (FileStream SourceStream = File.Open(filename, FileMode.OpenOrCreate))
+                {
+                    SourceStream.Seek(0, SeekOrigin.End);
+                    await SourceStream.WriteAsync(result, 0, result.Length);
+                }
+            }
+            catch(Exception)
+            {
+                isSuccessful = false;
+            }
+            return await Task<bool>.Run(() => isSuccessful).ConfigureAwait(false);
         }
 
         private List<OrderView> ReadOrdersFromFile()
