@@ -36,7 +36,7 @@ namespace MicroserviceSample.Orders.Services
     public class OrderService : IOrderService
     {
         List<OrderItem> itemsList;
-        string fileName = "orders.txt";
+        string fileName = "orders.json";
         string ordersFilePath = "";
         public OrderService(IHostEnvironment env)
         {
@@ -49,7 +49,8 @@ namespace MicroserviceSample.Orders.Services
                 new OrderItem { Item = "Hot Wings", Price = 2.0m },
                 new OrderItem { Item = "Soft Drink", Price = 1.99m },
             };
-            ordersFilePath = env.ContentRootPath + "/" + fileName;
+            ordersFilePath = Path.Combine(env.ContentRootPath, fileName);
+            CreateOrdersFile();
         }
 
         public IEnumerable<OrderItem> GetItems()
@@ -98,12 +99,7 @@ namespace MicroserviceSample.Orders.Services
                 UnicodeEncoding uniencoding = new UnicodeEncoding();
                 string filename = ordersFilePath;
                 string ordersText = JsonConvert.SerializeObject(ordersList);
-                byte[] result = uniencoding.GetBytes(ordersText);
-                using (FileStream SourceStream = File.Open(filename, FileMode.OpenOrCreate))
-                {
-                    SourceStream.Seek(0, SeekOrigin.End);
-                    await SourceStream.WriteAsync(result, 0, result.Length);
-                }
+                File.WriteAllText(ordersFilePath, ordersText);
             }
             catch(Exception)
             {
@@ -112,24 +108,29 @@ namespace MicroserviceSample.Orders.Services
             return await Task<bool>.Run(() => isSuccessful).ConfigureAwait(false);
         }
 
+        private void CreateOrdersFile()
+        {
+            if (!File.Exists(ordersFilePath))
+            {
+                File.Create(ordersFilePath);
+                FileIOPermission fp = new FileIOPermission(FileIOPermissionAccess.AllAccess, ordersFilePath);
+            }
+        }
+
         private List<OrderView> ReadOrdersFromFile()
         {
             List<OrderView> ordersList = new List<OrderView>();
             try
             {
-                if (!File.Exists(ordersFilePath))
-                {
-                    File.Create(ordersFilePath);
-                    FileIOPermission fp = new FileIOPermission(FileIOPermissionAccess.AllAccess, ordersFilePath);
-                }
                 string ordersText = File.ReadAllText(ordersFilePath);
                 if (ordersText.Length > 0)
                 {
                     ordersList = JsonConvert.DeserializeObject<List<OrderView>>(ordersText);
                 }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                string message = ex.Message;
             }
             return ordersList;
         }
