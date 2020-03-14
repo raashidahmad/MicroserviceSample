@@ -15,7 +15,7 @@ The project is being developed using Microsoft Visual Studio 2019. The project c
 - MicroserviceSample.Currencies (A service)
 - MicroserviceSample.APIGateway (Gateway for the services, created using Ocelot)
 
-Open the solution using Visual Studio and run it. Before running the projects, right click on the main project and set the all the three projects to
+Open the solution using Visual Studio and run it. Before running the projects, right click on the main project, go to Properties, and set the all the three projects to
 start simultaneously. Follow the screen shot given below.
 ![Screenshot](Startup_Projects.png)
 
